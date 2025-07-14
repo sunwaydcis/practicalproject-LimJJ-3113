@@ -1,14 +1,16 @@
 package ch.makery.address
 
 import ch.makery.address.model.Person
+import ch.makery.address.view.PersonEditDialogController
 import javafx.fxml.FXMLLoader
 import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
-import scalafx.scene.Scene
+import scalafx.scene.{Scene, control}
 import scalafx.Includes.*
 import javafx.scene as jfxs
 import scalafx.beans.property.StringProperty
 import scalafx.collections.ObservableBuffer
+import scalafx.stage.{Modality, Stage}
 
 object MainApp extends JFXApp3:
 
@@ -54,6 +56,24 @@ object MainApp extends JFXApp3:
     val personOverview = loader.getRoot[jfxs.layout.AnchorPane]
     this.roots.foreach(_.setCenter(personOverview))
 
+  def showPersonEditDialog(person: Person): Boolean =
+    val resource = getClass.getResource("view/PersonEditDialog.fxml")
+    val loader = new FXMLLoader(resource)
+    loader.load();
+    val roots2 = loader.getRoot[jfxs.Parent]
+    val control = loader.getController[PersonEditDialogController]
+
+    val dialog = new Stage():
+      initModality(Modality.ApplicationModal)
+      initOwner(stage)
+      scene = new Scene:
+        root = roots2
+
+    control.dialogStage = dialog
+    control.person = person
+    dialog.showAndWait()
+
+    control.okClicked
   // Optional: Testing property bindings (unchanged)
   val stringA = new StringProperty("sunway")
   val stringB = new StringProperty("monash")

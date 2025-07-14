@@ -82,3 +82,25 @@ class PersonOverviewController():
         headerText = "No Person Selected"
         contentText = "Please select a person in the table."
       alert.showAndWait()
+
+  def handleNewPerson(action: ActionEvent) =
+    val person = new Person("", "")
+    val okClicked = MainApp.showPersonEditDialog(person);
+    if (okClicked) then
+      MainApp.personData += person
+
+  def handleEditPerson(action: ActionEvent) =
+    val selectedPerson = personTable.selectionModel().selectedItem.value
+    if (selectedPerson != null) then
+      val okClicked = MainApp.showPersonEditDialog(selectedPerson)
+
+      if (okClicked) then showPersonDetails(Some(selectedPerson))
+
+    else
+      // Nothing selected.
+      val alert = new Alert(Alert.AlertType.Warning):
+        initOwner(MainApp.stage)
+        title = "No Selection"
+        headerText = "No Person Selected"
+        contentText = "Please select a person in the table."
+      .showAndWait()
