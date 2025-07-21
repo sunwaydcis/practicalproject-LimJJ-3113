@@ -1,7 +1,7 @@
 package ch.makery.address
 
 import ch.makery.address.model.Person
-import ch.makery.address.view.PersonEditDialogController
+import ch.makery.address.view.{PersonEditDialogController, PersonOverviewController}
 import javafx.fxml.FXMLLoader
 import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
@@ -10,12 +10,16 @@ import scalafx.Includes.*
 import javafx.scene as jfxs
 import scalafx.beans.property.StringProperty
 import scalafx.collections.ObservableBuffer
+import scalafx.scene.image.Image
 import scalafx.stage.{Modality, Stage}
 
 object MainApp extends JFXApp3:
 
   // Window Root Pane
   var roots: Option[scalafx.scene.layout.BorderPane] = None
+  //stylesheet
+  var cssResource = getClass.getResource("view/DarkTheme.css")
+  var overviewControl: Option[PersonOverviewController] = None
 
   val personData = new ObservableBuffer[Person]()
   /**
@@ -42,7 +46,9 @@ object MainApp extends JFXApp3:
 
     stage = new PrimaryStage():
       title = "AddressApp"
+      icons += new Image(getClass.getResource("/images/book.png").toExternalForm)
       scene = new Scene():
+        stylesheets = Seq(cssResource.toExternalForm)
         root = roots.get
 
     // Display PersonOverview
@@ -54,6 +60,8 @@ object MainApp extends JFXApp3:
     val loader = new FXMLLoader(resource)
     loader.load()
     val personOverview = loader.getRoot[jfxs.layout.AnchorPane]
+    val ctrl = loader.getController[PersonOverviewController]
+    overviewControl = Option(ctrl)
     this.roots.foreach(_.setCenter(personOverview))
 
   def showPersonEditDialog(person: Person): Boolean =
@@ -67,6 +75,7 @@ object MainApp extends JFXApp3:
       initModality(Modality.ApplicationModal)
       initOwner(stage)
       scene = new Scene:
+        stylesheets = Seq(cssResource.toExternalForm)
         root = roots2
 
     control.dialogStage = dialog
