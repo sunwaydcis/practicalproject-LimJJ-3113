@@ -86,8 +86,11 @@ class PersonOverviewController():
   def handleNewPerson(action: ActionEvent) =
     val person = new Person("", "")
     val okClicked = MainApp.showPersonEditDialog(person);
-    if (okClicked) then
+    if (okClicked) then {
       MainApp.personData += person
+      val id = person.save()
+      id.map(x => person.id.value = x)
+    }
 
   def handleEditPerson(action: ActionEvent) =
     val selectedPerson = personTable.selectionModel().selectedItem.value
@@ -95,7 +98,7 @@ class PersonOverviewController():
       val okClicked = MainApp.showPersonEditDialog(selectedPerson)
 
       if (okClicked) then showPersonDetails(Some(selectedPerson))
-
+      selectedPerson.save()
     else
       // Nothing selected.
       val alert = new Alert(Alert.AlertType.Warning):
